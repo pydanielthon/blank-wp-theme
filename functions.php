@@ -1,72 +1,142 @@
 <?php
+require_once get_template_directory() . '/include/customizer.php';
+
 
 class Theme {
   public function __construct() {
-    add_action('wp_enqueue_scripts', array($this, 'cut2code_files'));
-
-  }
-  function cut2code_files() {
-    wp_enqueue_style('botstrapCSS', get_theme_file_uri('/inc/bootstrap-5.1.1-dist/css/bootstrap.min.css'));
-    wp_enqueue_style('style_main', get_theme_file_uri('/css/style.css'));
-    
-    wp_enqueue_script('bootstrapJS', get_theme_file_uri('/inc/bootstrap-5.1.1-dist/js/bootstrap.bundle.min.js'),array('jquery'), 1.0, true);
-    wp_enqueue_script('accordionJS', get_theme_file_uri('/js/accordion.js'),array('jquery'), 1.0, true);
-
+    add_action('wp_enqueue_scripts', array($this, 'add_scripts'));
+    add_action('acf/init', array($this, 'acf_blocks_register'));
+    add_theme_support( 'menus' );
+    add_filter('upload_mimes', array($this, 'cc_mime_types'));
   }
 
+  function add_scripts() {
+
+    wp_enqueue_style('botstrapCSS', get_theme_file_uri('/include/bootstrap-5.1.1-dist/css/bootstrap.min.css'));
+    wp_enqueue_style('style_main', get_theme_file_uri('/assets/all.min.css'));
+    wp_enqueue_script('bootstrapJS', get_theme_file_uri('/include/bootstrap-5.1.1-dist/js/bootstrap.bundle.min.js'),array('jquery'), 1.0, true);
+    wp_enqueue_script('js', get_theme_file_uri('/assets/all.js'),array('jquery'), 1.0, true);
+    wp_enqueue_script('owlcarousel', get_template_directory_uri() . '/include/OwlCarousel/dist/owl.carousel.min.js', array( 'jquery' ), false);
+    wp_enqueue_style('owl-css', get_bloginfo('template_url') . '/include/OwlCarousel/dist/assets/owl.carousel.css', array(), '1.0');
+
+
+  }
+  function cc_mime_types($mimes) {
+    $mimes['svg'] = 'image/svg+xml';
+    return $mimes;
+   }
+
+  function acf_blocks_register()
+  {
+      acf_register_block_type(array(
+          'name' => 'video',
+          'title' => __('Video Section'),
+          'description' => __('Section with video in background'),
+          'category' => 'formatting',
+          'icon' => 'admin-comments',
+          'keywords' => array('video'),
+          'supports' => array(
+              'align' => true,
+              'mode' => true,
+              '__experimental_jsx' => true,
+          ),
+          'render_template'   =>  'templates/blocks/video.php',
+      ));
+
+      acf_register_block_type(array(
+        'name' => 'text',
+        'title' => __('Custom texts'),
+        'description' => __('Section with custom texts'),
+        'category' => 'formatting',
+        'icon' => 'admin-comments',
+        'keywords' => array('text'),
+        'supports' => array(
+            'align' => true,
+            'mode' => true,
+            '__experimental_jsx' => true,
+        ),
+        'render_template'   =>  'templates/blocks/texts.php',
+    ));
+
+    acf_register_block_type(array(
+      'name' => 'separator',
+      'title' => __('Custom separator'),
+      'description' => __('Section with custom separator'),
+      'category' => 'formatting',
+      'icon' => 'admin-comments',
+      'keywords' => array('separator'),
+      'supports' => array(
+          'align' => true,
+          'mode' => true,
+          '__experimental_jsx' => true,
+      ),
+      'render_template'   =>  'templates/blocks/separator.php',
+  ));
+
+  
+  acf_register_block_type(array(
+    'name' => 'title',
+    'title' => __('Custom title'),
+    'description' => __('Section with custom title'),
+    'category' => 'formatting',
+    'icon' => 'admin-comments',
+    'keywords' => array('title'),
+    'supports' => array(
+        'align' => true,
+        'mode' => true,
+        '__experimental_jsx' => true,
+    ),
+    'render_template'   =>  'templates/blocks/title.php',
+));
+
+acf_register_block_type(array(
+  'name' => 'image',
+  'title' => __('Custom image'),
+  'description' => __('Section with custom image'),
+  'category' => 'formatting',
+  'icon' => 'admin-comments',
+  'keywords' => array('image'),
+  'supports' => array(
+      'align' => true,
+      'mode' => true,
+      '__experimental_jsx' => true,
+  ),
+  'render_template'   =>  'templates/blocks/image.php',
+));
+
+
+acf_register_block_type(array(
+  'name' => 'twoimages',
+  'title' => __('Custom two images'),
+  'description' => __('Section with custom two images'),
+  'category' => 'formatting',
+  'icon' => 'admin-comments',
+  'keywords' => array('twoimages'),
+  'supports' => array(
+      'align' => true,
+      'mode' => true,
+      '__experimental_jsx' => true,
+  ),
+  'render_template'   =>  'templates/blocks/twoimages.php',
+));
+
+acf_register_block_type(array(
+  'name' => 'about',
+  'title' => __('About section'),
+  'description' => __('Section for about section'),
+  'category' => 'formatting',
+  'icon' => 'admin-comments',
+  'keywords' => array('about'),
+  'supports' => array(
+      'align' => true,
+      'mode' => true,
+      '__experimental_jsx' => true,
+  ),
+  'render_template'   =>  'templates/blocks/about.php',
+));
 }
-
-
-$template = new Theme();
-
-
-
-//Bloki/Sekcje gutenberg
-
-add_action('acf/init', 'my_acf_blocks_init');
-function my_acf_blocks_init() {
-
-    // Check function exists.
-    if( function_exists('acf_register_block_type') ) {
-
-          // Register a One block.
-          acf_register_block_type(array(
-              'name'              => 'section_1',
-              'title'             => __('section_1'),
-              'description'       => __('A custom section_1 block.'),
-              'render_template'   => 'template-parts/blocks/section_1.php',
-              'category'          => 'formatting',
-        'enqueue_style'		=> get_stylesheet_directory_uri() . '/css/style.css'
-          ));
-
-          acf_register_block_type(array(
-            'name'              => 'section_2_image_and_slider',
-            'title'             => __('section_2_image_and_slider'),
-            'description'       => __('A custom section_2_image_and_slider block.'),
-            'render_template'   => 'template-parts/blocks/section_2_image_and_slider.php',
-            'category'          => 'formatting',
-      'enqueue_style'		=> get_stylesheet_directory_uri() . '/css/style.css'
-        ));
-
-          acf_register_block_type(array(
-            'name'              => 'section_3_accordion',
-            'title'             => __('section_3_accordion'),
-            'description'       => __('A custom section_3_accordion block.'),
-            'render_template'   => 'template-parts/blocks/section_3_accordion.php',
-            'category'          => 'formatting',
-      'enqueue_style'		=> get_stylesheet_directory_uri() . '/css/style.css'
-        ));
-
-
-          acf_register_block_type(array(
-            'name'              => 'section_4_contact',
-            'title'             => __('section_4_contact'),
-            'description'       => __('A custom section_4_contact block.'),
-            'render_template'   => 'template-parts/blocks/section_4_contact.php',
-            'category'          => 'formatting',
-      'enqueue_style'		=> get_stylesheet_directory_uri() . '/css/style.css'
-        ));
-         
-    }
 }
+$theme = new Theme();
+
+
 

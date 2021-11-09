@@ -1,0 +1,13 @@
+p,
+span{
+    font-family: 'Roboto Thin';
+    .bold{
+        font-family: 'Roboto Bold';
+    }
+}
+a{
+    color: black;
+    &:hover{
+        color: black;
+    }
+}

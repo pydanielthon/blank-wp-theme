@@ -2,14 +2,6 @@
 /*
 Template name: index
 */
-get_header(); ?>
-      <?php 
-        while(have_posts()){  
-          the_post(); ?>     
-          <?php the_content(); ?>
-       <?php  }
-           echo paginate_links();
-      ?>
-
-    </div>
-    <?php get_footer(); ?>
+get_header(); 
+the_content();
+get_footer(); 
